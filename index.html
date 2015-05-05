@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta charset="utf-8">
+<title>Political Futures Tracker: #Hashtag Usage</title>
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800' rel='stylesheet' type='text/css'>
+<link href='nesta-common.css' rel='stylesheet' type='text/css'>
+<script src="d3.js"></script>
+<script src="d3.layout.cloud.js"></script>
+</head>
+
+<body>
+<div id="logos">
+<a href="http://www.nesta.org.uk" style="float: left;"><img src="./images/nesta.svg" style="height:25px;padding-top:7px;"></a>
+<a href="http://gate.ac.uk" style="float:right;"><img src="./images/gate-logo.png" style="height:40px;"></a>
+<a href="http://www.sheffield.ac.uk" style="float:right;"><img src="./images/tuoslogo.gif" style="height:40px;"></a>
+<div style="clear:both;"></div>
+</div>
+<h1>Political Futures Tracker: #Hashtag Usage</h1>
+<div id="content">
+<div id="blurb"><img src="./images/pft.jpg" style="height:17em;float: right; padding-left:10px;">
+<p>The <a href="http://www.nesta.org.uk/news/political-futures-tracker">Political Futures Tracker</a> is a collaboration between <a href="http://www.nesta.org.uk/">Nesta</a> and the <a href="http://www.sheffield.ac.uk/">University of Sheffield</a>. It tells us the top political themes, how positive or negative people feel about them, and how far parties and politicians are looking to the future.</p>
+<p>The software behind the Political Futures Tracker uses ground breaking language analysis methods, via the <a href="http://gate.ac.uk">GATE architecture</a>, to examine data from Twitter, party websites and speeches. We will also be conducting live analysis on the TV debates running over the next month, seeing how the public respond to what politicians are saying in real time. Leading up to the 2015 UK General Election we will be looking across the political spectrum for emerging trends and innovation insights.<p>
+
+<p>The frequency of use of hashtags on Twitter, when presented visually allows a quick insight into the topics being discussed. This example shows the main topics of discussion that occurred between 8pm and 9:30pm on the 16th of April during the debate, hosted by the BBC, featuring the leaders of the five main opposition parties.</p><div style="clear:both;"></div></div>
+<svg id="cloud"></svg>
+<div style="clear:both;"></div>
+</div>
+<script>
+
+function loadJSON(file, callback) {   
+
+	var xobj = new XMLHttpRequest();
+	xobj.overrideMimeType("application/json");
+	xobj.open('GET', file, true); 
+	xobj.onreadystatechange = function () {
+		if (xobj.readyState == 4 && xobj.status == "200") {
+			// Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+			callback(xobj.responseText);
+		}
+	};
+    xobj.send(null);  
+}
+
+  var fill = d3.scale.category20();
+
+loadJSON("hashtags.json", function(response) {
+
+	var words = JSON.parse(response);
+  d3.layout.cloud().size([930, 768])
+      .words(words["words"])
+      .padding(1)
+      .rotate(function() { return ~~(Math.random() * 2) * 90; })
+      .font("Impact")
+      .fontSize(function(d) { return d.size; })
+      .on("end", draw)
+      .start();
+
+  
+});
+
+function draw(words) {
+    d3.select("#cloud")
+        .attr("width", 930)
+        .attr("height", 768)
+      .append("g")
+        .attr("transform", "translate(465,384)")
+      .selectAll("text")
+        .data(words)
+      .enter().append("text")
+        .style("font-size", function(d) { return d.size + "px"; })
+        .style("font-family", "Impact")
+        .style("fill", function(d, i) { return fill(i); })
+        .attr("text-anchor", "middle")
+        .attr("transform", function(d) {
+          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+        })
+        .text(function(d) { return d.text; });
+  }
+
+function saveAsSVG(id, link) {
+ 
+  if (link.href != "#") {
+    window.URL.revokeObjectURL(link.href);
+  }
+       
+  var svg = document.getElementById(id);
+ 
+  var content = svg.outerHTML;
+   
+  var blob = new Blob([content], {type: "image/svg+xml"});
+ 
+  link.href = window.URL.createObjectURL(blob);
+ 
+  return true;
+}
+</script>
+<!-- <a href="#" download="cloud.svg" onClick="return saveAsSVG('cloud',this);">Save Cloud as SVG</a> -->
+</body>
+</html>

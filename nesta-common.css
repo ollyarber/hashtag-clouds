@@ -1,0 +1,41 @@
+body, html {
+   font-family: 'Open Sans', sans-serif;
+   font-size:16px;
+   font-weight:300;
+   margin:0;
+   padding:0;
+}
+
+h1 {
+   color: #00a651;
+   text-align:center;
+   background-image: url("./images/pattern_crazy_paving_light.jpg");
+   background-position: left top;
+   background-repeat: repeat;
+   background-attachment: fixed;
+   padding: 25px 0;
+   clear:both;
+   font-size: 2rem;
+}
+
+#logos {
+   padding-top:10px;
+}
+
+a {
+   color: #00a651 !important;
+}
+
+#blurb {
+   padding-bottom: 1em;
+}
+
+#content, #logos {
+   width: 950px;
+   margin: 0 auto;
+}
+
+#content {
+padding-bottom: 50px;
+}
+
